@@ -1,0 +1,100 @@
+
+pack.png
+size: 256,32
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+black
+  rotate: false
+  xy: 102, 12
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+brick
+  rotate: false
+  xy: 120, 12
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+buttonpressed
+  rotate: false
+  xy: 2, 2
+  size: 16, 8
+  split: 2, 2, 2, 2
+  orig: 16, 8
+  offset: 0, 0
+  index: -1
+buttonrest
+  rotate: false
+  xy: 210, 20
+  size: 16, 8
+  split: 2, 2, 2, 2
+  orig: 16, 8
+  offset: 0, 0
+  index: -1
+end
+  rotate: false
+  xy: 138, 12
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+fade
+  rotate: false
+  xy: 156, 12
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+floormid
+  rotate: false
+  xy: 20, 2
+  size: 16, 8
+  orig: 16, 8
+  offset: 0, 0
+  index: -1
+floorright
+  rotate: false
+  xy: 228, 20
+  size: 16, 8
+  orig: 16, 8
+  offset: 0, 0
+  index: -1
+platform
+  rotate: false
+  xy: 38, 2
+  size: 16, 8
+  split: 4, 4, 0, 0
+  orig: 16, 8
+  offset: 0, 0
+  index: -1
+play
+  rotate: false
+  xy: 2, 12
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+quit
+  rotate: false
+  xy: 52, 12
+  size: 48, 16
+  orig: 48, 16
+  offset: 0, 0
+  index: -1
+shadowright
+  rotate: false
+  xy: 174, 12
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
+window
+  rotate: false
+  xy: 192, 12
+  size: 16, 16
+  orig: 16, 16
+  offset: 0, 0
+  index: -1
