@@ -19,7 +19,6 @@ public class End implements IScript {
 
     public End(World world) {
         this.world = world;
-
     }
 
     @Override

@@ -11,42 +11,39 @@ import com.badlogic.gdx.physics.box2d.World;
 
 public class MoveState extends DynamicObjectState {
 
-    public static final int STATE_STILL = 1;
+    public static final int STATE_MOVE = 1;
     public MoveState(Player player) {
         this.enumState = STATE_MOVE;
         this.player = player;
         this.world = player.world;
+        this.stateMachine = player.movementStateMachine;
     }
 
     public void enter() {
         //if(stateMachine.previousState != stateMachine.currentState)
-            player.stateComponent.set(player.animationComponent.frameRangeMap.get("Walk"), 24, Animation.PlayMode.NORMAL);
+            player.stateComponent.set(player.animationComponent.frameRangeMap.get("Walk"), 24, Animation.PlayMode.LOOP);
     }
 
     public void update(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.transformComponent.x -= player.speed.x * player.speedModifier * delta;
-            player.transformComponent.scaleX = -1f;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.transformComponent.x += player.speed.x * player.speedModifier * delta;
-            player.transformComponent.scaleX = 1f;
-        }
+
     }
 
     public void exit() {
 
     }
 
-    public void handleInput(float delta) {
-        //JUMP
-        if(player.autoHop) {
-            if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                player.stateMachine.change("falling");
+     public void handleInput(float delta) {
+        //MOVE
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.transformComponent.x -= player.speed.x * player.speedModifier * delta;
+            player.transformComponent.scaleX = -1f;
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.transformComponent.x += player.speed.x * player.speedModifier * delta;
+            player.transformComponent.scaleX = 1f;
         }
         else {
-            if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                player.stateMachine.change("falling");
+            stateMachine.change("still");
         }
     }
 }

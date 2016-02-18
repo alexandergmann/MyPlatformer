@@ -1,4 +1,4 @@
-package com.myplatformer.game;
+    package com.myplatformer.game;
 
 import com.badlogic.ashley.core.Entity;
 import com.badlogic.gdx.Gdx;
@@ -33,7 +33,7 @@ public abstract class DynamicObject {
     SpriteAnimationStateComponent stateComponent;
     DimensionsComponent dimensionsComponent;
     private DecimalFormat df;
-    DynamicObjectStateMachine stateMachine;
+    DynamicObjectStateMachine positionStateMachine, movementStateMachine;
 
     private abstract void rayCastDown();
     public abstract float getX();

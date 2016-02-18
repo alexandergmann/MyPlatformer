@@ -52,7 +52,11 @@ public class Player extends DynamicObject implements IScript {
         df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
 
-        stateMachine = new DynamicObjectStateMachine();
+        positionStateMachine = new DynamicObjectStateMachine();
+        positionStateMachine.change("stand");
+
+        movementStateMachine = new DynamicObjectStateMachine();
+        movementStateMachine.change("still");
     }
 
     @Override
@@ -65,8 +69,11 @@ public class Player extends DynamicObject implements IScript {
         transformComponent.y += speed.y*delta;
 
         rayCastDown();
-        stateMachine.update(delta);
-        stateMachine.handleInput(delta);
+        positionStateMachine.update(delta);
+        positionStateMachine.handleInput(delta);
+
+        movementStateMachine.update(delta);
+        movementStateMachine.handleInput(delta);
 
 
         //MOMENTUM
@@ -173,15 +180,10 @@ public class Player extends DynamicObject implements IScript {
                     transformComponent.y = (point.y / PhysicsBodyLoader.getScale()+ 0.01f);
 
                     //MOVE
-                    if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                        stateMachine.change("move");
-                    }
-                    else {
-                        stateMachine.change("stand");
-                    }
 
-                    //if(wasFalling)
-                        //momentumTime = bunnyhopGap;
+                    positionStateMachine.change("stand");
+
+                    //momentumTime = bunnyhopGap;
 
 
                     return 0;

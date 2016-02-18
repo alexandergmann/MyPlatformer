@@ -7,5 +7,6 @@ package com.myplatformer.game;
 public abstract class DynamicObjectState  extends State {
     Player player;
     World world;
+    DynamicObjectStateMachine stateMachine;
     public abstract void handleInput(float delta); 
 }

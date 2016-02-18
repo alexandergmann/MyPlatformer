@@ -15,6 +15,7 @@ public class DynamicObjectStateMachine extends StateMachine {
         super.add("stand", new StandState(this));
         super.add("falling", new FallingState(this));
         super.add("move", new MoveState(this));
-        super.change("stand");
+        super.add("crouch", new CrouchState(this));
+        super.add("still", new StillState(this));
     }
 }
