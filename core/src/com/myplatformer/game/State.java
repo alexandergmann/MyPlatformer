@@ -5,7 +5,7 @@ package com.myplatformer.game;
  */
 
 public abstract class State {
-	protected enumState;
+	public int enumState;
     public abstract void update(float delta);
     public abstract void enter();
     public abstract void exit();
