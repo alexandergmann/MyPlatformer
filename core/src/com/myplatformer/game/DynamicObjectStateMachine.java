@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class DynamicObjectStateMachine extends StateMachine {    
 
-    public StateMachine() {
+    public DynamicObjectStateMachine() {
         // call constructor for statemachine class
         super();
         super.add("stand", new StandState(this));
