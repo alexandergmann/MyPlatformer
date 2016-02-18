@@ -54,7 +54,7 @@ public class MyPlatformer extends ApplicationAdapter {
 		shapeRenderer = new ShapeRenderer();
 		df = new DecimalFormat("#");
 		df.setRoundingMode(RoundingMode.CEILING);
-		currentScene = "MenuScene";
+		currentScene = "MainScene";
 		loadLevel();
 	}
 

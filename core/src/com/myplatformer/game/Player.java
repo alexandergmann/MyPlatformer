@@ -25,20 +25,21 @@ import java.text.DecimalFormat;
 public class Player implements IScript {
 
     private Entity player;
-    private TransformComponent transformComponent;
-    private World world;
-    private Vector2 speed;
-    private float gravity = -500f;
-    private float jumpSpeed = 100f;
-    private float speedModifier;
-    private boolean isFalling, isWalking, wasWalking, wasFalling, isCrouching;
-    private int jumpCounter, momentumTime;
-    private SpriteAnimationComponent animationComponent;
-    private SpriteAnimationStateComponent stateComponent;
-    private DimensionsComponent dimensionsComponent;
+    TransformComponent transformComponent;
+    World world;
+    Vector2 speed;
+    float gravity = -500f;
+    float jumpSpeed = 100f;
+    float speedModifier;
+    //private boolean isFalling, isWalking, wasWalking, wasFalling, isCrouching;
+    int jumpCounter, momentumTime;
+    SpriteAnimationComponent animationComponent;
+    SpriteAnimationStateComponent stateComponent;
+    DimensionsComponent dimensionsComponent;
     private DecimalFormat df;
-    private int bunnyhopGap;
+    int bunnyhopGap;
     boolean autoHop;
+    StateMachine stateMachine;
 
     public Player(World world) {
         this.world = world;
@@ -47,32 +48,49 @@ public class Player implements IScript {
     @Override
     public void init(Entity entity) {
         player = entity;
+
         transformComponent = ComponentRetriever.get(player, TransformComponent.class);
         animationComponent = ComponentRetriever.get(player, SpriteAnimationComponent.class);
         stateComponent = ComponentRetriever.get(player, SpriteAnimationStateComponent.class);
         dimensionsComponent = ComponentRetriever.get(player, DimensionsComponent.class);
+
         speed = new Vector2(80,0);
         momentumTime = 0;
         speedModifier = 1;
         bunnyhopGap = 6; //4 for extreme, 6 for standard, 10 for easy
 
-        autoHop = true;
+        autoHop = false;
 
         df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
+
+        stateMachine = new StateMachine();
+        stateMachine.add("stand", new StandState(this));
+        stateMachine.add("falling", new FallingState(this));
+        stateMachine.add("move", new MoveState(this));
+        stateMachine.change("stand");
     }
 
     @Override
     public void act(float delta) {
-
         if(delta == 0)
             return;
 
-        wasWalking = isWalking;
-        isWalking = false;
-        wasFalling = isFalling;
+        //GRAVITY
+        speed.y += gravity*delta;
+        transformComponent.y += speed.y*delta;
+
+        rayCastDown();
+        stateMachine.update(delta);
+        stateMachine.handleInput(delta);
 
 
+        //MOMENTUM
+        if(momentumTime > 0)
+            momentumTime -= 1;
+
+
+        /*
         //MOVE LEFT
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.A)) {
             if(!isCrouching) {
@@ -128,8 +146,9 @@ public class Player implements IScript {
                 }
             }
 
-        }
+        }*/
 
+        /*
         //CROUCH
         if(Gdx.input.isKeyJustPressed(Input.Keys.DOWN) && !isWalking && !isCrouching && !isFalling) {
             isCrouching = true;
@@ -140,58 +159,13 @@ public class Player implements IScript {
         if(Gdx.input.isKeyJustPressed(Input.Keys.UP) && !isWalking && isCrouching && !isFalling) {
             isCrouching = false;
             stateComponent.set(animationComponent.frameRangeMap.get("Crouch"), 24, Animation.PlayMode.REVERSED);
-        }
+        }*/
 
-        //JUMP
-        if(autoHop) {
-            if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                jump();
-        }
-        else {
-            if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                jump();
-        }
 
-        //GRAVITY
-        speed.y += gravity*delta;
-        transformComponent.y += speed.y*delta;
 
-        rayCastDown();
-
-        if (wasWalking && !isWalking && !isFalling) {
-            if(!isCrouching)
-                stateComponent.set(animationComponent.frameRangeMap.get("Stand"), 24, Animation.PlayMode.NORMAL);
-            else
-                stateComponent.set(animationComponent.frameRangeMap.get("CrouchStay"), 24, Animation.PlayMode.LOOP);
-        }
-        if (!wasWalking && isWalking && !isFalling) {
-            if(!isCrouching)
-                stateComponent.set(animationComponent.frameRangeMap.get("Walk"), 24, Animation.PlayMode.LOOP);
-            else
-                stateComponent.set(animationComponent.frameRangeMap.get("Crawl"), 24, Animation.PlayMode.LOOP);
-        }
-
-        //MOMENTUM
-        if(momentumTime > 0)
-            momentumTime -= 1;
 
     }
 
-    private void jump() {
-        if(!isFalling) {
-            speed.y = jumpSpeed*1.5f;
-            isFalling = true;
-            isCrouching = false;
-            stateComponent.set(animationComponent.frameRangeMap.get("Jump"), 24, Animation.PlayMode.NORMAL);
-            jumpCounter++;
-            if((momentumTime > 0 && isWalking) || bunnyhopGap == 0) {
-                speedModifier += 0.1;
-            }
-            if(momentumTime > 0 && !isWalking) {
-                speedModifier = 1;
-            }
-        }
-    }
 
 
 
@@ -212,16 +186,18 @@ public class Player implements IScript {
                 public float reportRayFixture(Fixture fixture, Vector2 point, Vector2 normal, float fraction) {
 
                     speed.y = 0;
-
                     transformComponent.y = (point.y / PhysicsBodyLoader.getScale()+ 0.01f);
-                    if(isFalling) {
-                        stateComponent.set(animationComponent.frameRangeMap.get("Stand"), 24, Animation.PlayMode.NORMAL);
-                        wasWalking = false;
+
+                    //MOVE
+                    if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+                        stateMachine.change("move");
                     }
-                    isFalling = false;
-                    jumpCounter = 0;
-                    if(wasFalling)
-                        momentumTime = bunnyhopGap;
+                    else {
+                        stateMachine.change("stand");
+                    }
+
+                    //if(wasFalling)
+                        //momentumTime = bunnyhopGap;
 
 
                     return 0;
