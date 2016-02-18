@@ -9,16 +9,13 @@ import com.badlogic.gdx.physics.box2d.World;
  * Created by Aaron Weiss on 2/17/2016.
  */
 
-public class MoveState extends State {
+public class MoveState extends DynamicObjectState {
 
-    Player player;
-    StateMachine stateMachine;
-    World world;
-
+    public static final int STATE_STILL = 1;
     public MoveState(Player player) {
+        this.enumState = STATE_MOVE;
         this.player = player;
         this.world = player.world;
-        this.stateMachine = player.stateMachine;
     }
 
     public void enter() {
@@ -45,11 +42,11 @@ public class MoveState extends State {
         //JUMP
         if(player.autoHop) {
             if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                stateMachine.change("falling");
+                player.stateMachine.change("falling");
         }
         else {
             if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                stateMachine.change("falling");
+                player.stateMachine.change("falling");
         }
     }
 }

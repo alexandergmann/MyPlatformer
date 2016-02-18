@@ -10,16 +10,12 @@ import com.uwsoft.editor.renderer.physics.PhysicsBodyLoader;
  * Created by Owner on 2/17/2016.
  */
 
-public class StandState extends State {
-
-    Player player;
-    StateMachine stateMachine;
-    World world;
-
+public class StandState extends DynamicObjectState {
+    public static final int STATE_STILL = 0;
     public StandState (Player player) {
+        this.enumState = STATE_STILL;
         this.player = player;
         this.world = player.world;
-        this.stateMachine = player.stateMachine;
     }
 
     public void enter() {
@@ -39,17 +35,17 @@ public class StandState extends State {
 
         //MOVE
         if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            stateMachine.change("move");
+            player.stateMachine.change("move");
         }
 
         //JUMP
         if(player.autoHop) {
             if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                stateMachine.change("falling");
+                player.stateMachine.change("falling");
         }
         else {
           if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                stateMachine.change("falling");
+                player.stateMachine.change("falling");
         }
     }
 }

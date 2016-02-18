@@ -22,24 +22,12 @@ import java.text.DecimalFormat;
 /**
  * Created by Aaron Weiss on 1/23/2016.
  */
-public class Player implements IScript {
+public class Player extends DynamicObject implements IScript {
 
     private Entity player;
-    TransformComponent transformComponent;
-    World world;
-    Vector2 speed;
-    float gravity = -500f;
-    float jumpSpeed = 100f;
-    float speedModifier;
-    //private boolean isFalling, isWalking, wasWalking, wasFalling, isCrouching;
     int jumpCounter, momentumTime;
-    SpriteAnimationComponent animationComponent;
-    SpriteAnimationStateComponent stateComponent;
-    DimensionsComponent dimensionsComponent;
-    private DecimalFormat df;
     int bunnyhopGap;
     boolean autoHop;
-    StateMachine stateMachine;
 
     public Player(World world) {
         this.world = world;
@@ -64,11 +52,7 @@ public class Player implements IScript {
         df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
 
-        stateMachine = new StateMachine();
-        stateMachine.add("stand", new StandState(this));
-        stateMachine.add("falling", new FallingState(this));
-        stateMachine.add("move", new MoveState(this));
-        stateMachine.change("stand");
+        stateMachine = new DynamicObjectStateMachine();
     }
 
     @Override

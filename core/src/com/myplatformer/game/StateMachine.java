@@ -8,16 +8,16 @@ import java.util.HashMap;
  */
 
 public class StateMachine {
-    HashMap<String, State> map;
-    State currentState;
-    State previousState;
+    private HashMap<String, State> map;
+    private State currentState;
+    private State previousState;
 
     public StateMachine() {
-        map = new HashMap<String, State>();
+        this.map = new HashMap<String, State>();
     }
 
     public void add(String name, State state) {
-        map.put(name, state);
+        this.map.put(name, state);
     }
 
     public void change(String name) {
@@ -35,5 +35,13 @@ public class StateMachine {
 
     public void handleInput(float delta) {
         currentState.handleInput(delta);
+    }
+
+    public State getState() {
+        return this.currentState;
+    }
+
+    public void getPreviousState() {
+        return this.previousState;
     }
 }

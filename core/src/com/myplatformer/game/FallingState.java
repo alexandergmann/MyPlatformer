@@ -9,16 +9,15 @@ import com.badlogic.gdx.physics.box2d.World;
  * Created by Aaron Weiss on 2/17/2016.
  */
 
-public class FallingState extends State {
-
-    Player player;
-    StateMachine stateMachine;
-    World world;
+public class FallingState extends DynamicObjectState {
+    public static final int STATE_FALL = 3;
+    public static final int STATE_JUMP = 2;
+    int yDirectionState;
 
     public FallingState(Player player) {
+        this.enumState = STATE_JUMP;
         this.player = player;
         this.world = player.world;
-        this.stateMachine = player.stateMachine;
     }
 
     public void enter() {
@@ -28,16 +27,17 @@ public class FallingState extends State {
 
     public void update(float delta) {
 
-
         if((player.momentumTime > 0) || player.bunnyhopGap == 0) {
             player.speedModifier += 0.1;
-        }
-        if(player.momentumTime > 0 ) {
+        } else if(player.momentumTime > 0 ) {
             player.speedModifier = 1;
         }
 
-
-
+        if(player.speed.y > 0) {
+            this.yDirectionState = STATE_JUMP;
+        } else if (player.speed.y < 0 ) {
+            this.yDirectionState = STATE_FALL;
+        }
     }
 
     public void exit() {
