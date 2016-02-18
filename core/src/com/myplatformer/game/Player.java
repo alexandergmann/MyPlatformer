@@ -39,7 +39,7 @@ public class Player implements IScript {
     private DecimalFormat df;
     int bunnyhopGap;
     boolean autoHop;
-    StateMachine stateMachine;
+    StateMachine positionStateMachine, movementStateMachine;
 
     public Player(World world) {
         this.world = world;
@@ -64,11 +64,17 @@ public class Player implements IScript {
         df = new DecimalFormat("#.#");
         df.setRoundingMode(RoundingMode.CEILING);
 
-        stateMachine = new StateMachine();
-        stateMachine.add("stand", new StandState(this));
-        stateMachine.add("falling", new FallingState(this));
-        stateMachine.add("move", new MoveState(this));
-        stateMachine.change("stand");
+        positionStateMachine = new StateMachine();
+        positionStateMachine.add("crouch", new CrouchState(this));
+        positionStateMachine.add("stand", new StandState(this));
+        positionStateMachine.add("falling", new FallingState(this));
+        positionStateMachine.change("stand");
+
+        movementStateMachine = new StateMachine();
+        movementStateMachine.add("move", new MoveState(this));
+        movementStateMachine.add("still", new StillState(this));
+        movementStateMachine.change("still");
+
     }
 
     @Override
@@ -81,8 +87,11 @@ public class Player implements IScript {
         transformComponent.y += speed.y*delta;
 
         rayCastDown();
-        stateMachine.update(delta);
-        stateMachine.handleInput(delta);
+        positionStateMachine.update(delta);
+        positionStateMachine.handleInput(delta);
+
+        movementStateMachine.update(delta);
+        movementStateMachine.handleInput(delta);
 
 
         //MOMENTUM
@@ -189,15 +198,10 @@ public class Player implements IScript {
                     transformComponent.y = (point.y / PhysicsBodyLoader.getScale()+ 0.01f);
 
                     //MOVE
-                    if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-                        stateMachine.change("move");
-                    }
-                    else {
-                        stateMachine.change("stand");
-                    }
 
-                    //if(wasFalling)
-                        //momentumTime = bunnyhopGap;
+                    positionStateMachine.change("stand");
+
+                    //momentumTime = bunnyhopGap;
 
 
                     return 0;

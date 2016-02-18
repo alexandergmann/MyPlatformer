@@ -18,42 +18,38 @@ public class FallingState extends State {
     public FallingState(Player player) {
         this.player = player;
         this.world = player.world;
-        this.stateMachine = player.stateMachine;
+        this.stateMachine = player.positionStateMachine;
     }
 
     public void enter() {
         player.stateComponent.set(player.animationComponent.frameRangeMap.get("Jump"), 24, Animation.PlayMode.NORMAL);
         player.speed.y = player.jumpSpeed*1.5f;
+
+        if((player.momentumTime > 0)) {
+            player.speedModifier += 0.1;
+        }
+        if(player.momentumTime == 0 ) {
+            player.speedModifier = 1;
+        }
     }
 
     public void update(float delta) {
 
 
-        if((player.momentumTime > 0) || player.bunnyhopGap == 0) {
-            player.speedModifier += 0.1;
-        }
-        if(player.momentumTime > 0 ) {
-            player.speedModifier = 1;
-        }
-
-
-
     }
 
     public void exit() {
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT) || Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.stateComponent.set(player.animationComponent.frameRangeMap.get("Walk"), 24, Animation.PlayMode.LOOP);
+        } else {
+            player.stateComponent.set(player.animationComponent.frameRangeMap.get("Stand"), 24, Animation.PlayMode.NORMAL);
+        }
 
+        player.momentumTime = player.bunnyhopGap;
     }
 
     public void handleInput(float delta) {
-        //MOVE
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.transformComponent.x -= player.speed.x * player.speedModifier * delta;
-            player.transformComponent.scaleX = -1f;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.transformComponent.x += player.speed.x * player.speedModifier * delta;
-            player.transformComponent.scaleX = 1f;
-        }
+
     }
 
 }

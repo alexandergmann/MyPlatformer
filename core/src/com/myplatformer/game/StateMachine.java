@@ -36,4 +36,5 @@ public class StateMachine {
     public void handleInput(float delta) {
         currentState.handleInput(delta);
     }
+
 }

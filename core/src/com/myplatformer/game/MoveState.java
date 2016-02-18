@@ -18,23 +18,16 @@ public class MoveState extends State {
     public MoveState(Player player) {
         this.player = player;
         this.world = player.world;
-        this.stateMachine = player.stateMachine;
+        this.stateMachine = player.movementStateMachine;
     }
 
     public void enter() {
         //if(stateMachine.previousState != stateMachine.currentState)
-            player.stateComponent.set(player.animationComponent.frameRangeMap.get("Walk"), 24, Animation.PlayMode.NORMAL);
+            player.stateComponent.set(player.animationComponent.frameRangeMap.get("Walk"), 24, Animation.PlayMode.LOOP);
     }
 
     public void update(float delta) {
-        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
-            player.transformComponent.x -= player.speed.x * player.speedModifier * delta;
-            player.transformComponent.scaleX = -1f;
-        }
-        if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
-            player.transformComponent.x += player.speed.x * player.speedModifier * delta;
-            player.transformComponent.scaleX = 1f;
-        }
+
     }
 
     public void exit() {
@@ -42,14 +35,17 @@ public class MoveState extends State {
     }
 
     public void handleInput(float delta) {
-        //JUMP
-        if(player.autoHop) {
-            if(Gdx.input.isKeyPressed(Input.Keys.SPACE))
-                stateMachine.change("falling");
+        //MOVE
+        if(Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            player.transformComponent.x -= player.speed.x * player.speedModifier * delta;
+            player.transformComponent.scaleX = -1f;
+        }
+        else if(Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            player.transformComponent.x += player.speed.x * player.speedModifier * delta;
+            player.transformComponent.scaleX = 1f;
         }
         else {
-            if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE))
-                stateMachine.change("falling");
+            stateMachine.change("still");
         }
     }
 }
